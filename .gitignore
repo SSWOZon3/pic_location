@@ -1,0 +1,115 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+
+# General
+*.pid
+*.pid.lock
+*.seed
+*.swo
+*.swz
+*.temp
+*.tmp
+*.tmp.drivedownload
+*.zip
+*.tgz
+*.rar
+*.gz
+
+# Dart/Flutter
+/generated_plugin_registrant.dart
+
+# Android related (Mantener archivos de configuración y gradle, excluir archivos generados y temporales)
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/local.properties
+**/android/build/
+**/android/**/GeneratedPluginRegistrant.*
+
+# Android keystores (opcional, depende de la seguridad)
+# NOTA: Descomenta estas líneas si quieres incluir tus keystores en el repositorio (no recomendado para proyectos públicos)
+# **/android/key.properties
+# **/android/app/*.keystore
+
+# iOS related (Excluir archivos generados y temporales, mantener archivos de configuración)
+**/ios/**/GeneratedPluginRegistrant.*
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/App.framework
+**/ios/Flutter/FlutterPluginRegistrant/
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcodeproj/xcuserdata/
+
+# macOS related
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/Flutter.framework
+**/macos/Flutter/GeneratedPluginRegistrant.*
+**/macos/Pods/
+**/macos/Runner/GeneratedPluginRegistrant.*
+
+# Linux related
+**/linux/flutter/
+**/linux/.dart_tool/
+**/linux/Flutter/ephemeral/
+
+# Windows related
+**/windows/flutter/
+**/windows/.dart_tool/
+**/windows/Flutter/ephemeral/
+
+# Visual Studio Code related
+.vscode/
+
+# Web related
+/web:build/
+
+# Exceptions to above rules.
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
