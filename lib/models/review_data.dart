@@ -7,6 +7,7 @@ class ReviewData {
   final double latitude;
   final double longitude;
   final String imageUrl;
+  final String publisherId;
 
   ReviewData(
       {required this.id,
@@ -14,7 +15,8 @@ class ReviewData {
       required this.title,
       required this.latitude,
       required this.longitude,
-      required this.imageUrl});
+      required this.imageUrl,
+      required this.publisherId});
 
   factory ReviewData.fromJson(Map<String, dynamic> json) {
     return ReviewData(
@@ -24,6 +26,7 @@ class ReviewData {
       latitude: json['latitude'].toDouble(),
       longitude: json['longitude'].toDouble(),
       imageUrl: json['imageUrl'],
+      publisherId: json['publisherId'],
     );
   }
 
@@ -34,6 +37,7 @@ class ReviewData {
     double? latitude,
     double? longitude,
     String? imageUrl,
+    String? publisherId,
   }) {
     return ReviewData(
       id: id ?? this.id,
@@ -42,6 +46,7 @@ class ReviewData {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       imageUrl: imageUrl ?? this.imageUrl,
+      publisherId: publisherId ?? this.publisherId,
     );
   }
 }
