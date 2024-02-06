@@ -24,9 +24,6 @@ class ItemInList extends StatelessWidget {
           builder: (context) => ReviewScreen(markerId: markerId),
         ));
       },
-      onTap: () {
-
-      },
       child: Card(
         elevation: 5,
         clipBehavior: Clip.antiAlias,

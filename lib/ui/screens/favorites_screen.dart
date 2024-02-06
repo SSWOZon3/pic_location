@@ -22,9 +22,6 @@ class FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     final userData = ref.watch(userStateProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Favoritos"),
-      ),
       body: ListView.builder(
         itemCount: userData.favorites.length,
         itemBuilder: (context, index) {
@@ -33,7 +30,6 @@ class FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               imageUrl: userData.favorites[index].imageUrl,
               markerId: userData.favorites[index].id,
           );
-          //'https://www.blogdelfotografo.com/wp-content/uploads/2019/02/johannes-plenio-629984-unsplash.jpg'
         },
       ),
     );

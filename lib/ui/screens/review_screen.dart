@@ -39,6 +39,7 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                     Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
+                        // TODO: adaptar al dispositivo
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0)),
@@ -103,6 +104,7 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                                   .removeReviewFromFavorites(reviewData.id);
                         }),
                     // TODO: Coger la ciudad a la que pertenece
+                    // TODO: añadir tags
                   ],
                 ),
               ),

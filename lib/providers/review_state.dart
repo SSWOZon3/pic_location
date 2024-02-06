@@ -16,7 +16,8 @@ class ReviewState extends StateNotifier<ReviewData> {
             title: '',
             latitude: 0.0,
             longitude: 0.0,
-            imageUrl: ''));
+            imageUrl: '',
+            publisherId: ''));
 
   void updateReview(ReviewData newReview) {
     state = newReview;
