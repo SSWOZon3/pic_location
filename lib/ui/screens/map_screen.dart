@@ -16,6 +16,7 @@ class MapScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController searchController = TextEditingController();
     final mapData = ref.watch(mapStateProvider);
     ref.read(mapStateProvider.notifier).setOnMarkerTapCallback((String markerId) {
       Navigator.of(context).push(MaterialPageRoute(
@@ -45,29 +46,53 @@ class MapScreen extends ConsumerWidget {
             },
           ),
           SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    LatLngBounds bounds = await _getVisibleRegion(ref);
-                    ref.read(mapStateProvider.notifier).searchThisArea(bounds);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(30), // Bordes redondeados
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: "Search here",
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: _moveToSearchLocation,
+                      ),
                     ),
                   ),
-                  child: const Text('Search this area'),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        LatLngBounds bounds = await _getVisibleRegion(ref);
+                        ref.read(mapStateProvider.notifier).searchThisArea(bounds);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(30), // Bordes redondeados
+                        ),
+                      ),
+                      child: const Text('Search this area'),
+                    ),
+                  ),
+                ),
+              ],
             ),
           )
         ],
       ),
     );
+  }
+
+  void _moveToSearchLocation() async {
+    // Call Google maps API
+    final LatLng searchLocation = LatLng(37.77483, -122.41942);
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newLatLng(searchLocation));
   }
 
   void _onAddMarkerButtonPressed(
