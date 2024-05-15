@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pic_location/models/review_data.dart';
 
 class MapService {
-  Future<List<ReviewData>> fetchLocationsWithinArea(LatLngBounds bounds) async {
+  Future<List<ReviewData>> fetchLocationsWithinArea(LatLngBounds bounds, String accessToken) async {
     final response = await http.get(
       Uri.parse('http://localhost:3000/api/review/area?'
           'topRightLat=${bounds.northeast.latitude}&'
@@ -14,6 +14,7 @@ class MapService {
           'bottomLeftLng=${bounds.southwest.longitude}'),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     if (response.statusCode == 200) {

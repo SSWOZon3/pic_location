@@ -57,7 +57,6 @@ class UserStateNotifier extends StateNotifier<User> {
 
   Future<void> removeReviewFromFavorites(String markerId) async {
     String accessToken = ref.read(sessionStateProvider).accessToken;
-    print(accessToken);
     final response = await http.delete(
       Uri.parse('http://localhost:3000/api/user/favorites/$markerId'),
       headers: {
@@ -65,7 +64,6 @@ class UserStateNotifier extends StateNotifier<User> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    print(response.body);
 
     User user =  User.fromJson(json.decode(response.body));
     state = user;

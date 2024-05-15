@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pic_location/models/review_data.dart';
+import 'package:pic_location/providers/session_provider.dart';
 import '../services/map_service.dart';
 import '../ui/screens/review_screen.dart';
 import '../models/map_data.dart';
@@ -9,11 +10,12 @@ import '../models/map_data.dart';
 typedef MarkerTapCallback = void Function(String markerId);
 
 class MapState extends StateNotifier<MapData> {
+  final Ref ref;
   final MapService _mapService;
   MarkerTapCallback? onMarkerTap;
   Map<String, ReviewData> markersInfo = {};
 
-  MapState(this._mapService)
+  MapState(this._mapService, this.ref)
       : super(MapData(
             markers: {}));
 
@@ -22,8 +24,10 @@ class MapState extends StateNotifier<MapData> {
   }
 
   Future<void> searchThisArea(LatLngBounds bounds) async {
+    String accessToken = ref.read(sessionStateProvider).accessToken;
+
     List<ReviewData> reviewDataList =
-        await _mapService.fetchLocationsWithinArea(bounds);
+        await _mapService.fetchLocationsWithinArea(bounds, accessToken);
 
     Set<Marker> markers = reviewDataList.map((ReviewData reviewData) {
       markersInfo[reviewData.id] = reviewData;
@@ -102,4 +106,4 @@ class MapState extends StateNotifier<MapData> {
 }
 
 final mapStateProvider =
-    StateNotifierProvider<MapState, MapData>((ref) => MapState(MapService()));
+    StateNotifierProvider<MapState, MapData>((ref) => MapState(MapService(), ref));

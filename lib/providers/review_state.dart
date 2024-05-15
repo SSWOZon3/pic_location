@@ -1,15 +1,15 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:pic_location/providers/session_provider.dart';
 import 'package:pic_location/services/review_service.dart';
 import '../models/review_data.dart';
-import '../models/user.dart';
 
 class ReviewState extends StateNotifier<ReviewData> {
+  final Ref ref;
   final ReviewService _reviewService;
 
-  ReviewState(this._reviewService)
+  ReviewState(this._reviewService, this.ref)
       : super(ReviewData(
             id: '',
             description: '',
@@ -25,17 +25,20 @@ class ReviewState extends StateNotifier<ReviewData> {
 
   Future<void> publishReview(double latitude, double longitude, Future<Uint8List> image,
       {required Function(ReviewData) onReviewPublished}) async {
+    String accessToken = ref.read(sessionStateProvider).accessToken;
+
     if (state.title.isNotEmpty && state.description.isNotEmpty) {
       final response = await _reviewService.submitReview(
-          state.title, state.description, latitude, longitude);
+          state.title, state.description, latitude, longitude, accessToken);
       onReviewPublished(response);
     }
   }
 
   Future<void> getReviewData(String markerId) async {
-    state = await _reviewService.getReviewData(markerId);
+    String accessToken = ref.read(sessionStateProvider).accessToken;
+    state = await _reviewService.getReviewData(markerId, accessToken);
   }
 }
 
 final reviewStateProvider = StateNotifierProvider<ReviewState, ReviewData>(
-    (ref) => ReviewState(ReviewService()));
+    (ref) => ReviewState(ReviewService(), ref));
