@@ -2,16 +2,20 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pic_location/providers/user_provider.dart';
+import '../../models/review_data.dart';
+import '../../providers/map_state.dart';
 import '../../providers/review_state.dart';
 
 class CreateReviewScreen extends ConsumerStatefulWidget {
   final String markerId;
   final ScrollController scrollController;
+  final LatLng location;
 
   const CreateReviewScreen(
-      {Key? key, required this.markerId, required this.scrollController})
+      {Key? key, required this.markerId, required this.scrollController, required this.location})
       : super(key: key);
 
   @override
@@ -21,8 +25,7 @@ class CreateReviewScreen extends ConsumerStatefulWidget {
 class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  XFile? _image;
-  Uint8List? _imageInBytes;
+  XFile? _selectedImage;
 
   @override
   void initState() {
@@ -44,11 +47,9 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      final imageInBytes = await pickedFile.readAsBytes();
 
       setState(() {
-        _image = pickedFile;
-        _imageInBytes = imageInBytes;
+        _selectedImage = pickedFile;
       });
     }
   }
@@ -60,6 +61,41 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
     final userProvider = ref.read(userStateProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
 
+    void publishReview() {
+      if (_selectedImage == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Selecciona una imagen'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+      ref
+          .read(reviewStateProvider.notifier)
+          .publishReview(
+            widget.location.latitude,
+            widget.location.longitude,
+            _selectedImage!.path,
+            titleController.text,
+            descriptionController.text,
+            onReviewPublished: (ReviewData updatedReviewData) {
+              ref
+                .read(mapStateProvider.notifier)
+                .updateMarker(widget.location, reviewData.id);
+            });
+    }
+
     return Stack(children: [
       SingleChildScrollView(
         controller: widget.scrollController,
@@ -68,7 +104,7 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
           children: <Widget>[
             GestureDetector(
               onTap: _pickImage,
-              child: _image != null
+              child: _selectedImage != null
                   ? Container(
                       // TODO: poner todo con porcentajes
                       clipBehavior: Clip.antiAlias,
@@ -85,7 +121,7 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
                           ),
                         ],
                       ),
-                      child: Image.file(File(_image!.path), fit: BoxFit.cover))
+                      child: Image.file(File(_selectedImage!.path), fit: BoxFit.cover))
                   : Container( // TODO: poner todo con porcentajes
                       height: 200,
                       decoration: BoxDecoration(
@@ -143,9 +179,9 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(elevation: 2),
           onPressed: () {
-            // TODO: Conectar esto con el back
+            publishReview();
           },
-          child: Text('Publicar'),
+          child: const Text('Publicar'),
         ),
       ),
     ]);

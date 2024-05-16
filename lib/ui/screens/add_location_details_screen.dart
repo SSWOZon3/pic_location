@@ -28,11 +28,18 @@ class _AddLocationDetailsScreenState
     final reviewData = ref.watch(reviewStateProvider);
 
     void publishReview() {
-      Future<Uint8List> image = _selectedImage!.readAsBytes();
-
+      print('holaaa');
+      print(_selectedImage?.path);
+      if (_selectedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor, selecciona una imagen'),
+          ),
+        );
+      }
       ref
           .read(reviewStateProvider.notifier)
-          .publishReview(widget.location.latitude, widget.location.longitude, image,
+          .publishReview(widget.location.latitude, widget.location.longitude, _selectedImage!.path, '', '',
               onReviewPublished: (ReviewData updatedReviewData) {
         ref
             .read(mapStateProvider.notifier)
@@ -76,7 +83,7 @@ class _AddLocationDetailsScreenState
           ),
           ElevatedButton(
             onPressed: publishReview,
-            child: const Text('Publicar'),
+            child: const Text('Publicarrrr'),
           ),
         ],
       ),

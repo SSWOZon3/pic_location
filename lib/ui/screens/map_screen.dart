@@ -105,7 +105,7 @@ class MapScreen extends ConsumerWidget {
           expand: false,
           shouldCloseOnMinExtent: false,
           builder: (BuildContext context, ScrollController scrollController) {
-            return CreateReviewScreen(markerId: markerId, scrollController: scrollController);
+            return CreateReviewScreen(markerId: markerId, scrollController: scrollController, location: location);
           },
         );
       },

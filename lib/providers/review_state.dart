@@ -23,13 +23,13 @@ class ReviewState extends StateNotifier<ReviewData> {
     state = newReview;
   }
 
-  Future<void> publishReview(double latitude, double longitude, Future<Uint8List> image,
+  Future<void> publishReview(double latitude, double longitude, String imagePath, String title, String description,
       {required Function(ReviewData) onReviewPublished}) async {
     String accessToken = ref.read(sessionStateProvider).accessToken;
 
-    if (state.title.isNotEmpty && state.description.isNotEmpty) {
+    if (title.isNotEmpty && description.isNotEmpty) {
       final response = await _reviewService.submitReview(
-          state.title, state.description, latitude, longitude, accessToken);
+          title, description, latitude, longitude, imagePath, accessToken);
       onReviewPublished(response);
     }
   }
