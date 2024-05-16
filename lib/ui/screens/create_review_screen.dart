@@ -44,10 +44,9 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
 
   Future<void> _pickImage() async {
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-
       setState(() {
         _selectedImage = pickedFile;
       });
@@ -56,9 +55,8 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final reviewData = ref.watch(reviewStateProvider);
+    final reviewState = ref.watch(reviewStateProvider);
     final userData = ref.watch(userStateProvider);
-    final userProvider = ref.read(userStateProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
 
     void publishReview() {
@@ -81,109 +79,136 @@ class CreateReviewScreenState extends ConsumerState<CreateReviewScreen> {
         );
         return;
       }
-      ref
-          .read(reviewStateProvider.notifier)
-          .publishReview(
-            widget.location.latitude,
-            widget.location.longitude,
-            _selectedImage!.path,
-            titleController.text,
-            descriptionController.text,
-            onReviewPublished: (ReviewData updatedReviewData) {
-              ref
-                .read(mapStateProvider.notifier)
-                .updateMarker(widget.location, reviewData.id);
-            });
+      ref.read(reviewStateProvider.notifier).publishReview(
+        widget.location.latitude,
+        widget.location.longitude,
+        _selectedImage!.path,
+        titleController.text,
+        descriptionController.text,
+      );
     }
 
-    return Stack(children: [
-      SingleChildScrollView(
-        controller: widget.scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            GestureDetector(
-              onTap: _pickImage,
-              child: _selectedImage != null
-                  ? Container(
-                      // TODO: poner todo con porcentajes
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Image.file(File(_selectedImage!.path), fit: BoxFit.cover))
-                  : Container( // TODO: poner todo con porcentajes
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.photo_camera,
-                              size: 50, color: Colors.grey),
-                          Text('Selecciona una foto'),
-                        ],
-                      ),
+    ref.listen<ReviewState>(reviewStateProvider, (previous, next) {
+      if (previous?.reviewData.id != next.reviewData.id && next.reviewData.id.isNotEmpty){
+        ref.read(mapStateProvider.notifier).updateMarker(widget.location, next.reviewData.id);
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Review published successfully!')),
+        );
+      }
+    });
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          controller: widget.scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              GestureDetector(
+                onTap: _pickImage,
+                child: _selectedImage != null
+                    ? Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(screenSize.width * 0.03),
-                  child: TextField(
-                    controller: titleController,
-                    style: TextStyle(
-                        fontSize: screenSize.width * 0.06,
-                        fontWeight: FontWeight.bold),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
+                    child: Image.file(File(_selectedImage!.path), fit: BoxFit.cover))
+                    : Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.photo_camera,
+                          size: 50, color: Colors.grey),
+                      Text('Selecciona una foto'),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(screenSize.width * 0.03, 0,
-                      screenSize.width * 0.03, screenSize.width * 0.03),
-                  child: TextField(
-                    controller: descriptionController,
-                    style: TextStyle(
-                      fontSize: screenSize.width * 0.05,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(screenSize.width * 0.03),
+                    child: TextField(
+                      controller: titleController,
+                      style: TextStyle(
+                          fontSize: screenSize.width * 0.06,
+                          fontWeight: FontWeight.bold),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
                     ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                    maxLines: null,
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(screenSize.width * 0.03, 0,
+                        screenSize.width * 0.03, screenSize.width * 0.03),
+                    child: TextField(
+                      controller: descriptionController,
+                      style: TextStyle(
+                        fontSize: screenSize.width * 0.05,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      maxLines: null,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (reviewState.isLoading)
+          const Center(child: CircularProgressIndicator()),
+        if (reviewState.errorMessage != null)
+          Center(
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Text(reviewState.errorMessage!),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    ref.read(reviewStateProvider.notifier).updateReview(ReviewData(
+                      id: '',
+                      description: '',
+                      title: '',
+                      latitude: 0.0,
+                      longitude: 0.0,
+                      imageUrl: '',
+                      publisherId: '',
+                    )); // Reset the error state
+                  },
                 ),
               ],
             ),
-          ],
+          ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          padding: const EdgeInsets.only(bottom: 26.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(elevation: 2),
+            onPressed: publishReview,
+            child: const Text('Publicar'),
+          ),
         ),
-      ),
-      Container(
-        alignment: Alignment.bottomCenter,
-        // TODO: poner esto en porcentaje
-        padding: const EdgeInsets.only(bottom: 26.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(elevation: 2),
-          onPressed: () {
-            publishReview();
-          },
-          child: const Text('Publicar'),
-        ),
-      ),
-    ]);
+      ],
+    );
   }
 }

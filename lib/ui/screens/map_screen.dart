@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pic_location/providers/map_state.dart';
 import 'package:pic_location/ui/screens/review_screen.dart';
-import 'add_location_details_screen.dart';
 import 'create_review_screen.dart';
 
 class MapScreen extends ConsumerWidget {

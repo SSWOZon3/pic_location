@@ -24,7 +24,7 @@ class ReviewService {
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
-    if(response.statusCode != 200) {
+    if(response.statusCode != 201) {
       throw Exception('Error uploading image');
     }
     return ReviewData.fromJson(json.decode(response.body));

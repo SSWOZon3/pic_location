@@ -23,13 +23,13 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final reviewData = ref.watch(reviewStateProvider);
+    final reviewState = ref.watch(reviewStateProvider);
     final userData = ref.watch(userStateProvider);
     final userProvider = ref.read(userStateProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: reviewData.id != ''
+      body: reviewState.reviewData.id != ''
           ? SafeArea(
               child: SingleChildScrollView(
                 child: Column(
@@ -54,9 +54,9 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                         ],
                       ),
                       child: Hero(
-                        tag: reviewData.id,
+                        tag: reviewState.reviewData.id,
                         child: Image.network(
-                          reviewData.imageUrl,
+                          reviewState.reviewData.imageUrl,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -67,8 +67,8 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                         Padding(
                           padding: EdgeInsets.all(screenSize.width * 0.03),
                           child: Hero(
-                            tag: reviewData.title + reviewData.id,
-                            child: Text(reviewData.title,
+                            tag: reviewState.reviewData.title + reviewState.reviewData.id,
+                            child: Text(reviewState.reviewData.title,
                                 style: TextStyle(
                                     fontSize: screenSize.width * 0.06,
                                     fontWeight: FontWeight.bold)),
@@ -80,7 +80,7 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                               0,
                               screenSize.width * 0.03,
                               screenSize.width * 0.03),
-                          child: Text(reviewData.description,
+                          child: Text(reviewState.reviewData.description,
                               style: TextStyle(
                                 fontSize: screenSize.width * 0.05,
                               )),
@@ -90,7 +90,7 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                     SizedBox(height: screenSize.width * 0.02),
                     AnimatedFavoritesIconButton(
                         isFavorite: userData.favorites.firstWhereOrNull(
-                                    (review) => review.id == reviewData.id) !=
+                                    (review) => review.id == reviewState.reviewData.id) !=
                                 null
                             ? true
                             : false,
@@ -98,10 +98,10 @@ class ReviewScreenState extends ConsumerState<ReviewScreen> {
                           isFavorite
                               ? ref
                                   .read(userStateProvider.notifier)
-                                  .addReviewToFavorites(reviewData.id)
+                                  .addReviewToFavorites(reviewState.reviewData.id)
                               : ref
                                   .read(userStateProvider.notifier)
-                                  .removeReviewFromFavorites(reviewData.id);
+                                  .removeReviewFromFavorites(reviewState.reviewData.id);
                         }),
                     // TODO: Coger la ciudad a la que pertenece
                     // TODO: añadir tags
